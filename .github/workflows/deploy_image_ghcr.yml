@@ -1,0 +1,24 @@
+name: Deploy Image To GHCR
+
+on:
+  push:
+    branches:
+      = main
+  workflow_dispatch:
+
+jobs:
+  build-deploy-rudy-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout GitHub action'
+        uses: actions/checkout@main
+      - name: 'Login to ghcr'
+        uses: docker/login-action@main
+        with:
+          registry: ghcr.io
+          username: ${{github.actor}}
+          password: ${{secrets.GITHUB_TOKEN}}
+      - name: 'Build and deploy rudy image'
+        run: |
+          docker build . --tag ghcr.io/d1r7y/rudy:latest
+          docker push ghcr.io/d1r7y/rudy:latest
